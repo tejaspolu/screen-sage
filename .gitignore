@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+.env.*
+!.env.example
+.coverage
+.coverage.*
+.pytest_cache/
+.mypy_cache/
+
+# Packaging
+dist/
+build/
+*.egg-info/
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local history
+.history/
+
+# Logs
+*.log
