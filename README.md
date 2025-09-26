@@ -88,7 +88,4 @@ See `config.yaml` for defaults and `src/config.py` for loading order:
 pkill -f "src.main watch" || true
 ```
 
-### License
-MIT
-
 

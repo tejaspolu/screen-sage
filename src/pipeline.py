@@ -9,7 +9,7 @@ from pathlib import Path
 from .analyzer import Analyzer
 from .config import Settings
 from .note_writer import NoteContext, write_note
-from .utils import ensure_unique_path, slugify, timestamp_for_filename, wait_for_file_stable
+from .utils import ensure_unique_path, slugify, timestamp_for_filename, wait_for_file_stable, image_to_data_url
 
 
 SUPPORTED_EXTS = {".png", ".jpg", ".jpeg", ".gif"}
@@ -91,6 +91,16 @@ class Pipeline:
         except Exception:
             pass
 
+        # Notes directory lives under the watched screenshots folder
+        notes_dir = moved_path.parent / "Screenshot Notes"
+        # Compute relative path from the notes directory to the image (for markdown)
+        try:
+            rel_image_path = os.path.relpath(moved_path, notes_dir)
+        except Exception:
+            # Fallback to just the filename if relative fails
+            rel_image_path = moved_path.name
+
+        # Build note context; include data URL for robust rendering
         note_ctx = NoteContext(
             title=analysis.title,
             summary=analysis.summary,
@@ -98,9 +108,11 @@ class Pipeline:
             tags=analysis.tags,
             sensitivity=analysis.sensitivity,
             image_path=moved_path,
+            image_rel_path=Path(rel_image_path),
+            image_data_url=image_to_data_url(moved_path),
         )
-        # Write note next to the image (same folder) with a slugged filename
-        note_path = write_note(moved_path.parent, analysis.title, note_ctx)
+        # Write note under "Screenshot Notes" named after the image filename
+        note_path = write_note(notes_dir, analysis.title, note_ctx)
 
         return ProcessedResult(moved_image_path=moved_path, note_path=note_path)
 
